@@ -49,8 +49,8 @@ if [ "${SMTP_PORT}" = "465" ]; then
   add_config_value "smtp_tls_security_level" "encrypt"
 fi
 
-# Bind to both IPv4 and IPv4
-add_config_value "inet_protocols" "all"
+# Bind to both IPv4 and IPv6 by default, allow configuring through INET_PROTOCOLS
+add_config_value "inet_protocols" "${INET_PROTOCOLS:-all}"
 
 # Create sasl_passwd file with auth credentials
 if [ ! -f /etc/postfix/sasl_passwd -a ! -z "${SMTP_USERNAME}" ]; then
