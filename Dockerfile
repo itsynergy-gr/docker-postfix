@@ -3,7 +3,7 @@ FROM alpine:3.16
 MAINTAINER Juan Luis Baptiste juan.baptiste@gmail.com
 
 RUN apk update && \
-    apk add bash gawk cyrus-sasl cyrus-sasl-login cyrus-sasl-crammd5 mailx \
+    apk add bash gawk cyrus-sasl cyrus-sasl-login cyrus-sasl-crammd5 mailx tzdata \
     postfix && \
     rm -rf /var/cache/apk/* && \
     mkdir -p /var/log/supervisor/ /var/run/supervisor/ && \
