@@ -34,19 +34,35 @@ add_config_value "mydestination" "${DESTINATION:-localhost}"
 add_config_value "myorigin" '$mydomain'
 add_config_value "relayhost" "[${SMTP_SERVER}]:${SMTP_PORT}"
 add_config_value "smtp_use_tls" "yes"
+add_config_value "smtp_tls_session_cache_database" 'lmdb:${data_directory}/smtp_scache'
+
 if [ ! -z "${SMTP_USERNAME}" ]; then
   add_config_value "smtp_sasl_auth_enable" "yes"
   add_config_value "smtp_sasl_password_maps" "lmdb:/etc/postfix/sasl_passwd"
   add_config_value "smtp_sasl_security_options" "noanonymous"
+  add_config_value "smtp_sasl_tls_security_options" "noanonymous"
 fi
 add_config_value "always_add_missing_headers" "${ALWAYS_ADD_MISSING_HEADERS:-no}"
 #Also use "native" option to allow looking up hosts added to /etc/hosts via
 # docker options (issue #51)
 add_config_value "smtp_host_lookup" "native,dns"
 
+if [ ! -z "${SMTP_TLS_PROTOCOLS}" ]; then
+  add_config_value "smtp_tls_protocols" "${SMTP_TLS_PROTOCOLS}"
+fi
+
+if [ ! -z "${SMTP_TLS_CIPHERS}" ]; then
+  add_config_value "smtp_tls_ciphers" "${SMTP_TLS_CIPHERS}"
+  add_config_value "smtp_tls_mandatory_ciphers" "${SMTP_TLS_CIPHERS}"
+fi
+
 if [ "${SMTP_PORT}" = "465" ]; then
   add_config_value "smtp_tls_wrappermode" "yes"
   add_config_value "smtp_tls_security_level" "encrypt"
+fi
+
+if [ ! -z "${HEADER_SIZE_LIMIT}" ]; then
+  add_config_value "header_size_limit" "${HEADER_SIZE_LIMIT}"
 fi
 
 # Bind to both IPv4 and IPv6 by default, allow configuring through INET_PROTOCOLS
